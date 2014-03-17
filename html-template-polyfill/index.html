@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>HTML Template Element polyfill test</title>
+<script src="html-template-polyfill.js"></script>
+</head>
+
+<body>
+<h1>HTML Template Element Polyfill</h1>
+<template id="static">
+  <output class="static">static template OK</output>
+</template>
+
+<div id="output">
+</div>
+
+<p>This polyfill is intended to enable template.content properti in Safari.</p>
+<script>
+window.addEventListener('DOMContentLoaded', function(){
+  var staticTemplate = document.querySelector('template');
+  var output = document.querySelector('#output');
+
+  var tests = {
+    staticTemplate: function() {
+      output.appendChild(staticTemplate.content.cloneNode(true));
+      if(!output.querySelector('.static')) {
+        output.appendChild('static template FAILURE');
+      }
+    },
+
+    dynamicTemplate: function() {
+      var dynamicTemplate = document.createElement('template');
+      dynamicTemplate.innerHTML = '<output class="dynamic">dynamic template OK</output>';
+      document.body.appendChild(dynamicTemplate);
+
+      window.requestAnimationFrame(function(){
+        output.appendChild(dynamicTemplate.content.cloneNode(true));
+        if(!output.querySelector('.dynamic')) {
+          output.appendChild('dynamic template FAILURE');
+        }
+      });
+    }
+  };
+
+  Object.getOwnPropertyNames(tests).forEach(function(name) {
+    tests[name]();
+  })
+});
+</script>
+</body>
+</html>
