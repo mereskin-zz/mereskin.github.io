@@ -47,6 +47,9 @@
     var onDrop = function(e){
       e.preventDefault();
       e.target.className = 'drop-succeeded';
+      if(e.target.getAttribute('data-display-files')) {
+        e.target.textContent = e.dataTransfer.files.length + 'file(s) received';
+      }
       setTimeout(function(){ e.target.className = ''; }, 500);
     };
 
@@ -86,11 +89,8 @@
 <body>
 <h1>HTML 5 drag and drop API</h1>
 <p>This article mostly covers browser incosistencies. Tutorials and specs can be found in <a href="#references">references</a> section.</p>
-<p><strong>Disclaimer</strong> You should be using HTML5 drag and drop only if it absolutely necessary, meaning: (a) you want to drag objects across browser windows and applications; (b)
-if you are dragging files from desktop. Otherwise, consider mouse-events based alternative.</p>
 
 <article>
-
 <section id="draggable-attribute">
 <h2>Making element draggable</h2>
 <p>To make element draggable set <code>draggable</code> attribute to "true". But it is not enough for Firefox. In Firefox you must listen to <code>dragstart</code> event and set some data on <code>DataTransfer</code> object:</p>
@@ -123,10 +123,11 @@ event.dataTransfer.setData('application/json', JSON.stringify({ foo: 'bar' }));
 event.dataTransfer.setData('text/plain', 'foo=bar');
 </code></pre>
 
-<p>In practice IE only supports 'text' and 'URL' for the 'type' argument. If you try setting type to something else, IE will throw an exception. The unfortunate consequence of this incompatibility is that if type of your dataTransfer is 'text', all text areas and inputs will act as drop areas by default. If you set different type, they will ignore drop event.</p>
+<p>In practice IE only supports 'text' and 'URL' for the 'type' argument. If you try setting type to something else, IE will throw an exception. The unfortunate consequence of this incompatibility is that if type of your dataTransfer is 'text', all text areas and inputs will act as drop areas by default.</p>
+
 
 <div class="example">
-<span draggable="true">My data-type is 'text'</span>
+<span draggable="true">My data-type is 'text'. I interfere with inputs and textareas.</span>
 <span draggable="true" data-drag-type="application/json" data-drag-data='{"foo":"bar"}'>My data-type is 'application/json'. I crash IE.</span>
 <textarea rows="5" placeholder="Try dragging span here" style="display: block;"></textarea>
 </div>
@@ -173,11 +174,19 @@ elt.addEventListener('dragstart', function(e){
 </div>
 </section>
 
+<section>
+<h2>Dragging files from desktop</h2>
+<p>This is the most enjoyable part of this API. You can access files in <code>drop</code> event via <code>event.dataTransfer.files</code> property. <code>files</code> is <a href="https://developer.mozilla.org/en-US/docs/Web/API/FileList" target="_blank">FileList</a>. Individual files can be accessed by index. Support is consistent across all browsers and it is raison d'être of the whole drag and drop API.</p>
+<div class="example">
+<div data-drop-effect="copy" data-display-files="true">Drop files here</div>
+</div>
+</section>
+
 <section id="effects">
-<h2>dragEffect and effectAllowed</h2>
+<h2>dropEffect and effectAllowed</h2>
 <p>On start of drag operation you can set dropEffect on draggable element. Drop effect can be one of 'move', 'copy', 'link' or 'none'. Drop effect affects the cursor, when you move element over drop target.</p>
 <p>In theory, you can also provide effectAllowed for drop target. If drop effect of draggable eleent is not allowed on this particular target, drag operation will be cancelled.</p>
-<p>In practice, that doesn't work in Safari and IE. Drop event is not prevented, regardless of effects. You should probably avoid using drop effect API alltogether and determine whether particular operation is permitted by different means.</p>
+<p>In practice, that doesn't work in Safari and IE. Drop event is not prevented, regardless of effects you set on drag and drop elements. You should probably avoid using drop effect API alltogether and determine whether particular operation is permitted by different means.</p>
 <div class="example">
 <span draggable="true" data-drag-effect="copyMove">I can be copied and moved</span>
 <span draggable="true" data-drag-effect="link">I can only be linked</span>
@@ -234,6 +243,7 @@ This is drop zone with children:
 <li><a target="_blank" href=""></a></li>
 </ol>
 </section>
+</article>
 
 <div id="dragImage" class="drag-image"></div>
 </body>
