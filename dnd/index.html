@@ -86,27 +86,29 @@
   })();
   </script>
 </head>
+
 <body>
+<main>
+
+<article>
 <h1>HTML 5 drag and drop API</h1>
 <p>This article mostly covers browser incosistencies. Tutorials and specs can be found in <a href="#references">references</a> section.</p>
 
-<article>
 <section id="draggable-attribute">
 <h2>Making element draggable</h2>
 <p>To make element draggable set <code>draggable</code> attribute to "true". But it is not enough for Firefox. In Firefox you must listen to <code>dragstart</code> event and set some data on <code>DataTransfer</code> object:</p>
-<pre><code>
-draggableElement.addEventListener('dragstart', function(e){
+<pre><code>draggableElement.addEventListener('dragstart', function(e){
   e.dataTransfer.setData('text', 'foo');
-});
-</code></pre>
+});</code></pre>
 <p>That should do it. Now you can drag element in all browsers.</p>
+<div class="example">
 <span draggable="true">I am draggable</span>
+</div>
 </section>
 
 <section id="drag-events">
 <h2>Drag-related events</h2>
 <p><code>dragstart, drag and dragend</code> events are fired on draggable element. <code>dragstart</code> event is fired when drag operation has started, <code>dragend</code> fires when drag operation has completed; either on valid drop target or not. <code>drag</code> event is fired dozens times per second between dragstart and dragend events.</p>
-
 <div class="example">
 <span draggable="true" data-measure-rate="true">Drag me to count drag events</span>
 </div>
@@ -114,24 +116,17 @@ draggableElement.addEventListener('dragstart', function(e){
 
 <section id="set-data">
 <h2>DataTransfer object and setData method</h2>
-
 <p>DataTransfer object is used to hold the data during drag and drop operation. Data is added to DataTransfer object using <code>setData(type, data)</code> method. This method must be called in 'dragstart' event. Data you set is protected and will only become available on 'drop' event to drop target for security reasons. It helps to prevent third-party iframes from stealing your data if you drag over them.</p>
-
 <p>In theory, DataTransfer can hold multiple data items of various types:<p>
-<pre><code>
-event.dataTransfer.setData('application/json', JSON.stringify({ foo: 'bar' }));
-event.dataTransfer.setData('text/plain', 'foo=bar');
-</code></pre>
-
+<pre><code>var data = JSON.stringify({ foo: 'bar' });
+event.dataTransfer.setData('application/json', data);
+event.dataTransfer.setData('text/plain', 'foo=bar');</code></pre>
 <p>In practice IE only supports 'text' and 'URL' for the 'type' argument. If you try setting type to something else, IE will throw an exception. The unfortunate consequence of this incompatibility is that if type of your dataTransfer is 'text', all text areas and inputs will act as drop areas by default.</p>
-
-
 <div class="example">
 <span draggable="true">My data-type is 'text'. I interfere with inputs and textareas.</span>
 <span draggable="true" data-drag-type="application/json" data-drag-data='{"foo":"bar"}'>My data-type is 'application/json'. I crash IE.</span>
 <textarea rows="5" placeholder="Try dragging span here" style="display: block;"></textarea>
 </div>
-
 <details>
 <summary>Work around for IE</summary>
 <p>The only way to gate this is to add try-catch around <code>setData</code> and fall back to 'text', if you get an exception.</p>
@@ -141,22 +136,15 @@ event.dataTransfer.setData('text/plain', 'foo=bar');
 
 <section id="drag-image">
 <h2>Custom drag image</h2>
-
 <p>Another useful feature of drag and drop API is <code>setDragImage(elt, xOffset, yOffset)</code>. It allows you to use different visual representation of element being dragged. Despite it's name, it accepts arbitrary HTML element as an argument.</p>
-
 <p>The only requirement is that this element must be visible to the browser when drag operation starts. Chrome and Opera won't let you use offscreen element (<code>style.top = -1000px</code>). But you can place drag image under the non-transparent element and it will work just fine.</p>
-
-<pre><code>
-elt.addEventListener('dragstart', function(e){
+<pre><code>elt.addEventListener('dragstart', function(e){
   e.dataTransfer.setDragImage(document.querySelector('#dragImage'), 0, 0);
-});
-</code></pre>
-
+});</code></pre>
 <div class="example">
 <span draggable="true" data-drag-image="#dragImage">I have custom dragImage. I don't work in IE.</span>
 </div>
-
-<p>Needless to say, that IE doesn't support that at all.</p>
+<p>IE doesn't support setDragImage at all.</p>
 <details>
 <summary>Work around for IE</summary>
 <p>This problem can be worked around in IE by creating DOM element with position: fixed and moving it aroung on mousemove. You will also need to disable pointer events for drag image, otherwise it will interfere with drag events. In IE9 pointer events are supported only in SVG element, so your drag image cannot be an arbitrary element.</p>
@@ -210,7 +198,6 @@ elt.addEventListener('dragstart', function(e){
 
 <div class="example">
 <span draggable="true">I am draggable</span>
-
 <div data-drop-effect="all">
 This is drop zone with children:
 <div style="padding: 10px; margin: 5px;">First child</div>
@@ -219,7 +206,6 @@ This is drop zone with children:
 </div>
 </section>
 
-</section>
 <section id="custom-cursor">
 <h2>Custom cursor for draggable elements</h2>
 <p>You can set custom cursor for draggable element, but it is reset to default when drag operation is started. Drop effect can be used for limited adjustment. Firefox is the only browser, that pertains cursor during drag operation. Cursor for element currently being dragged can be targeted with :active pseudoclass.</p>
@@ -240,11 +226,12 @@ This is drop zone with children:
 <li><a target="_blank" href="http://blogs.msdn.com/b/ie/archive/2011/07/27/html5-drag-and-drop-in-ie10-ppb2.aspx">Blog post about drag-and-drop on MSDN</a></li>
 <li><a target="_blank" href="https://www.inkling.com/engineering/native-html5-drag-drop/">Native HTML5 drag and drop on Inkling</a></li>
 <li><a target="_blank" href="http://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html">The HTML5 drag and drop disaster</a></li>
-<li><a target="_blank" href=""></a></li>
 </ol>
 </section>
+<author>Andrey Mereskin, 20 July 2014</author>
 </article>
 
+</main>
 <div id="dragImage" class="drag-image"></div>
 </body>
 </html>
