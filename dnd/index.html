@@ -29,8 +29,12 @@
 <body>
 <h1>HTML 5 drag and drop API</h1>
 <p>This article mostly covers browser incosistencies. Tutorials and specs can be found in <a href="#references">references</a> section.</p>
+<p><strong>Disclaimer</strong> You should be using HTML5 drag and drop only if it absolutely necessary, meaning: (a) you want to drag objects across browser windows and applications; (b)
+if you are dragging files from desktop. Otherwise, consider mouse-events based alternative.</p>
 
 <article>
+
+<section id="draggable-attribute">
 <h2>Making element draggable</h2>
 <p>To make element draggable set <code>draggable</code> attribute to "true". This is not enough for Firefox, though. In firefox you must listen to <code>dragstart</code> event and set some data on <code>DataTransfer</code> object:</p>
 <pre><code>
@@ -94,6 +98,9 @@ event.dataTransfer.setData('text/plain', 'foo=bar');
 <li><a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Drag_and_drop">Drag-and-drop API spec (MDN)</a></li>
 <li><a target="_blank" href="http://www.html5rocks.com/en/tutorials/dnd/basics/">Tutorial on HTML5 rocks</a></li>
 <li><a target="_blank" href="http://blogs.msdn.com/b/ie/archive/2011/07/27/html5-drag-and-drop-in-ie10-ppb2.aspx">Blog post about drag-and-drop on MSDN</a></li>
+<li><a target="_blank" href="https://www.inkling.com/engineering/native-html5-drag-drop/">Native HTML5 drag and drop on Inkling</a></li>
+<li><a target="_blank" href="http://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html">The HTML5 drag and drop disaster</a></li>
+<li><a target="_blank" href=""></a></li>
 </ol>
 </section>
 
