@@ -6,7 +6,15 @@
   <script>
   (function(){
     var onDragStart = function(e){
-      e.dataTransfer.setData('text', 'foo');
+      var dragData = this.getAttribute('data-drag-data') || this.textContent;
+      var dataType = this.getAttribute('data-type') || 'text';
+
+      if(this.hasAttribute('data-drag-image') && e.dataTransfer.setDragImage) {
+        var dragImage = document.querySelector(this.getAttribute('data-drag-image'));
+        e.dataTransfer.setDragImage(dragImage, 0, 0);
+      };
+
+      e.dataTransfer.setData(dataType, dragData);
     };
 
     window.addEventListener('DOMContentLoaded', function(){
@@ -31,9 +39,53 @@ draggableElement.addEventListener('dragstart', function(e){
 });
 </code></pre>
 <p>That should do it. Now you can drag element in all browsers.</p>
+<span draggable="true">I am draggable</span>
+</section>
 
-<div draggable="true">I am draggable</div>
+<section id="set-data">
+<h2>DataTransfer object and setData method</h2>
 
+<p>DataTransfer object is used to hold the data during drag and drop operation. Data is added to DataTransfer object using <code>setData(type, data)</code> method. This method must be called in 'dragstart' event. Data you set is protected and will only become available on 'drop' event to drop target for security reasons. It helps to prevent third-party iframes from stealing your data if you drag over them.</p>
+
+<p>In theory, DataTransfer can hold multiple data items of various types:<p>
+<pre><code>
+event.dataTransfer.setData('application/json', JSON.stringify({ foo: 'bar' }));
+event.dataTransfer.setData('text/plain', 'foo=bar');
+</code></pre>
+
+<p>In practice IE only supports 'text' and 'URL' for the 'type' argument. If you try setting type to something else, IE will throw an exception. The unfortunate consequence of this incompatibility is that if type of your dataTransfer is 'text', all text areas and inputs will act as drop areas by default. If you set different type, they will ignore drop event.</p>
+
+<details>
+<summary>Work around</summary>
+<p>The only way to gate this is to add try-catch around <code>setData</code> and fall back to 'text', if you get an exception.</p>
+<a target="_blank" href="https://connect.microsoft.com/IE/feedback/details/898860/datatransfer-setdata-type-throws-an-exception-if-type-is-anything-but-text-and-url">Issue about dataTransfer.setData in IE feedback center</a>
+</details>
+
+<div>
+<span draggable="true">My data-type is 'text'</span>
+<span draggable="true" data-type="application/json" data-drag-data='{"foo":"bar"}'>My data-type is 'application/json'. I don't work in IE.</span>
+</div>
+<textarea rows="5" placeholder="Try dragging span here"></textarea>
+</section>
+
+<section id="drag-image">
+<h2>Custom drag image</h2>
+
+<p>Another useful feature of drag and drop API is setDragImage. It allows you to use different visual representation of element that is being dragged. Despite it's name, it accepts arbitrary HTML element as an argument.</p>
+
+<p>The only requirement is that this element must be visible to the browser when drag operation starts. Chrome and Opera won't let you use offscreen element (style.top = -1000px). But you can place drag image under the non-transparent element and it will work just fine.</p>
+
+<div>
+<span draggable="true" data-drag-image="#dragImage">I have custom dragImage. I crash IE.</span>
+</div>
+
+<p>Needless to say, that IE doesn't support that at all.</p>
+<details>
+<summary>Work around</summary>
+<p>This problem can be worked around in IE by creating DOM element with position: fixed and moving it aroung on mousemove. You will also need to disable pointer events for drag image, otherwise it will interfere with drag events. In IE9 pointer events are supported only in SVG element, so your drag image cannot be an arbitrary element.</p>
+<a target="_blank" href="https://connect.microsoft.com/IE/feedback/details/898851/datatransfer-setdragimage-is-not-working-on-drag-and-drop-events">Issue about setDragImage in IE connect center</a>
+</details>
+</section>
 </article>
 
 <section id="references">
@@ -45,5 +97,6 @@ draggableElement.addEventListener('dragstart', function(e){
 </ol>
 </section>
 
+<div id="dragImage" class="drag-image"></div>
 </body>
 </html>
