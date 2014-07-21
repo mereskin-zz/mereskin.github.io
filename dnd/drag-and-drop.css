@@ -5,6 +5,16 @@ article {
 [draggable] {
   background: lime;
 }
+[data-drop-effect] {
+  display: inline-block;
+  background: aqua;
+  padding: 10px;
+  margin: 5px;
+  transition: background 0.25s;
+}
+.drop-succeeded {
+  background: magenta;
+}
 
 .drag-image {
   background: url(box.svg);
