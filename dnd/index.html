@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HTML5 drag and drop browser incosistencies</title>
+  <link rel="stylesheet" href="drag-and-drop.css" />
+  <script>
+  (function(){
+    var onDragStart = function(e){
+      e.dataTransfer.setData('text', 'foo');
+    };
+
+    window.addEventListener('DOMContentLoaded', function(){
+      var draggables = document.querySelectorAll('[draggable]');
+      [].forEach.call(draggables, function(elt){
+        elt.addEventListener('dragstart', onDragStart);
+      });
+    })
+  })();
+  </script>
+</head>
+<body>
+<h1>HTML 5 drag and drop API</h1>
+<p>This article mostly covers browser incosistencies. Tutorials and specs can be found in <a href="#references">references</a> section.</p>
+
+<article>
+<h2>Making element draggable</h2>
+<p>To make element draggable set <code>draggable</code> attribute to "true". This is not enough for Firefox, though. In firefox you must listen to <code>dragstart</code> event and set some data on <code>DataTransfer</code> object:</p>
+<pre><code>
+draggableElement.addEventListener('dragstart', function(e){
+  e.dataTransfer.setData('text', 'foo');
+});
+</code></pre>
+<p>That should do it. Now you can drag element in all browsers.</p>
+
+<div draggable="true">I am draggable</div>
+
+</article>
+
+<section id="references">
+<h2>References</h2>
+<ol>
+<li><a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Drag_and_drop">Drag-and-drop API spec (MDN)</a></li>
+<li><a target="_blank" href="http://www.html5rocks.com/en/tutorials/dnd/basics/">Tutorial on HTML5 rocks</a></li>
+<li><a target="_blank" href="http://blogs.msdn.com/b/ie/archive/2011/07/27/html5-drag-and-drop-in-ie10-ppb2.aspx">Blog post about drag-and-drop on MSDN</a></li>
+</ol>
+</section>
+
+</body>
+</html>
