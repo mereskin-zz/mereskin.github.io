@@ -201,17 +201,27 @@ elt.addEventListener('dragstart', function(e){
 
 <div class="example">
 <span draggable="true">I am draggable</span>
-<div>
+
 <div data-drop-effect="all">
 This is drop zone with children:
 <div style="padding: 10px; margin: 5px;">First child</div>
 <div style="padding: 10px; margin: 5px;">Second child</div>
 </div>
 </div>
-</div>
 </section>
 
-</article>
+</section>
+<section id="custom-cursor">
+<h2>Custom cursor for draggable elements</h2>
+<p>You can set custom cursor for draggable element, but it is reset to default when drag operation is started. Drop effect can be used for limited adjustment. Firefox is the only browser, that pertains cursor during drag operation. Cursor for element currently being dragged can be targeted with :active pseudoclass.</p>
+</section>
+
+<section id="summary">
+<h2>Summary</h2>
+<p>Drag and drop API has limited application. Implementation across browsers vary greatly. Drag and drop API is not supported on mobile devices. IE implementation is non-compliant with the spec and team doesn't seem to be paying any attention to oustanding issues.</p>
+
+<p>Use native drag and drop API if (a) you need to drag objects across browser windows and applications or (b) you need to drag files from desktop. Otherwise, consider mouse-events based alternative.</p>
+</section>
 
 <section id="references">
 <h2>References</h2>
