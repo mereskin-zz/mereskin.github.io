@@ -21,6 +21,20 @@
       e.dataTransfer.setData(dataType, dragData);
     };
 
+    var onDragEnter = function(e){
+      onDragOver(e);
+
+      if(e.target.nodeType == 1) {
+        e.target.className = 'drop-over';
+      }
+    };
+
+    var onDragLeave = function(e){
+      if(e.target.nodeType == 1) {
+        e.target.className = '';
+      }
+    };
+
     var onDragOver = function(e){
       // Firefox fires ondragover events on text nodes
       if(e.target.nodeType == 1) {
@@ -31,7 +45,7 @@
     };
 
     var onDrop = function(e){
-      console.log(e.dataTransfer.getData('text'));
+      e.preventDefault();
       e.target.className = 'drop-succeeded';
       setTimeout(function(){ e.target.className = ''; }, 500);
     };
@@ -42,9 +56,26 @@
         elt.addEventListener('dragstart', onDragStart);
       });
 
+      [].forEach.call(document.querySelectorAll('[data-measure-rate]'), function(elt){
+        elt.addEventListener('dragstart', function(){
+          this._count = 0;
+        });
+
+        elt.addEventListener('drag', function(){
+          this._count ++;
+          this.textContent = 'drag events fired: ' + this._count;
+        });
+
+        elt.addEventListener('dragend', function(){
+          this._count = 0;
+          this.textContent = 'drag operation complete';
+        })
+      });
+
       var dropZones = document.querySelectorAll('[data-drop-effect]');
       [].forEach.call(dropZones, function(elt){
-        elt.addEventListener('dragenter', onDragOver);
+        elt.addEventListener('dragenter', onDragEnter);
+        elt.addEventListener('dragleave', onDragLeave);
         elt.addEventListener('dragover', onDragOver);
         elt.addEventListener('drop', onDrop);
       });
@@ -70,6 +101,15 @@ draggableElement.addEventListener('dragstart', function(e){
 </code></pre>
 <p>That should do it. Now you can drag element in all browsers.</p>
 <span draggable="true">I am draggable</span>
+</section>
+
+<section id="drag-events">
+<h2>Drag-related events</h2>
+<p><code>dragstart, drag and dragend</code> events are fired on draggable element. <code>dragstart</code> event is fired when drag operation has started, <code>dragend</code> fires when drag operation has completed; either on valid drop target or not. <code>drag</code> event is fired dozens times per second between dragstart and dragend events.</p>
+
+<div class="example">
+<span draggable="true" data-measure-rate="true">Drag me to count drag events</span>
+</div>
 </section>
 
 <section id="set-data">
@@ -145,6 +185,28 @@ elt.addEventListener('dragstart', function(e){
 <div data-drop-effect="move">I support move</div>
 <div data-drop-effect="copy">I support copy</div>
 <div data-drop-effect="link">I support link</div>
+</div>
+</div>
+</section>
+
+<section id="auto-scroll">
+<h2>Dragging and scrolling</h2>
+<p>If drop zone is far below or above the draggable element, you want the document to be scrolled automatically. For example, scroll to the top and try dragging one of the draggables to drop target near the bottom of the page. Chrome, IE and Opera will auto-scroll for you. In Firefox and Safari you have to either help youself with scroll wheel or implement custom scrolling logic, when your element is near the border of scroll container.</p>
+</section>
+
+<section id="drop-zone-events">
+<h2>Drop-target related events</h2>
+<p>Following events are fired on drop target: <code>dragenter, dragover, dragleave, drop</code>. <code>dragenter</code> and <code>dragover</code> must be prevented to enable element as a drop zone. <code>dragover</code> is fired at a certain rate while draggable is above drop zone.</p>
+<p>Unfortunately, <code>dragenter</code> and <code>dragleave</code> events are not consistent with other mouse events. For instance, <code>dragleave</code> event on the previous drop target is fired after <code>dragenter</code> on a new target. So don't rely on these events for detecting current drop target, for example. They are particularly poorly implemented in Firefox.</p>
+
+<div class="example">
+<span draggable="true">I am draggable</span>
+<div>
+<div data-drop-effect="all">
+This is drop zone with children:
+<div style="padding: 10px; margin: 5px;">First child</div>
+<div style="padding: 10px; margin: 5px;">Second child</div>
+</div>
 </div>
 </div>
 </section>

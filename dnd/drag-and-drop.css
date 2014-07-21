@@ -15,7 +15,9 @@ article {
 .drop-succeeded {
   background: magenta;
 }
-
+.drop-over {
+  background: yellow;
+}
 .drag-image {
   background: url(box.svg);
   background-size: 64px 64px;
