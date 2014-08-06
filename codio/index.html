@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Codio API playground</title>
+  <script src="../bower_components/versal-component-runtime/dist/runtime.min.js"></script>
+</head>
+<body>
+
+<style>
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.codio-form {
+  width: 100%;
+  height: 100%;
+}
+
+.codio-form fieldset {
+  height: 40px;
+  line-height: 40px;
+  background: #f2f4f6;
+}
+
+.codio-form [name=template] {
+  width: 400px;
+}
+
+.codio-form iframe {
+  width: 100%;
+  height: calc(100% - 40px);
+}
+</style>
+
+<form action="http://localhost:7325/codio/create" is="codio-project-form" class="codio-form">
+  <fieldset>
+    <input type="text" required name="template" value="https://github.com/mereskin/hello-world-gadget/archive/master.zip" />
+    <button type="submit">Edit with Codio</button>
+  </fieldset>
+
+  <iframe src="about:blank"></iframe>
+</form>
+
+<script>
+var CodioProjectForm = Object.create(HTMLFormElement.prototype, {
+  codioUrl: {
+    set: function(url){
+      this.querySelector('iframe').src = url;
+    }
+  },
+
+  creating: {
+    set: function(creating){
+      if(creating){
+        this.querySelector('button[type=submit]').disabled = true;
+      } else {
+        this.querySelector('button[type=submit]').disabled = false;
+      }
+    }
+  }
+});
+
+CodioProjectForm.createdCallback = function(){
+  this.onsubmit = this.onSubmit.bind(this);
+};
+
+CodioProjectForm.attachedCallback = function(){
+  if(localStorage['codio_url']) {
+    this.codioUrl = localStorage['codio_url'];
+  }
+};
+
+CodioProjectForm.onSubmit = function(e){
+  e.preventDefault();
+
+  var request = new XMLHttpRequest();
+  request.open('POST', this.action);
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.send(JSON.stringify({ templateUrl: this.template.value }));
+
+  this.creating = true;
+
+  request.onload = function(){
+    var response = JSON.parse(request.responseText);
+    var project = response.projects;
+
+    this.creating = false;
+    this.codioUrl = project.url;
+
+    localStorage['codio_url'] = project.url;
+  }.bind(this);
+
+  request.onerror = function(){
+    this.creating = false;
+    this.codioUrl = 'about:blank';
+  }.bind(this);;
+};
+
+
+document.registerElement('codio-project-form', {
+  prototype: CodioProjectForm,
+  extends: 'form'
+});
+</script>
+</body>
+</html>
