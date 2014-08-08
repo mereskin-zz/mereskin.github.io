@@ -24,7 +24,7 @@ body {
   background: #f2f4f6;
 }
 
-.codio-form [name=template] {
+.codio-form input {
   width: 400px;
 }
 
@@ -36,7 +36,11 @@ body {
 
 <form action="http://test.versal.io/codio/create" is="codio-project-form" class="codio-form">
   <fieldset>
-    <input type="text" required name="template" value="https://github.com/mereskin/hello-world-gadget/archive/master.zip" />
+    <select name="sourceType">
+      <option value="git">git</option>
+      <option value="url">url</option>
+    </select>
+    <input type="text" required name="sourceUrl" value="https://github.com/mereskin/hello-world-gadget" />
     <button type="submit">Edit with Codio</button>
   </fieldset>
 
@@ -75,27 +79,35 @@ CodioProjectForm.attachedCallback = function(){
 CodioProjectForm.onSubmit = function(e){
   e.preventDefault();
 
+  var body = {
+    sourceUrl: this.sourceUrl.value,
+    sourceType: this.sourceType.value
+  };
+
   var request = new XMLHttpRequest();
   request.open('POST', this.action);
   request.setRequestHeader('Content-Type', 'application/json');
-  request.send(JSON.stringify({ templateUrl: this.template.value }));
+  request.send(JSON.stringify(body));
 
   this.creating = true;
 
   request.onload = function(){
-    var response = JSON.parse(request.responseText);
-    var project = response.projects;
-
     this.creating = false;
-    this.codioUrl = project.url;
 
-    localStorage['codio_url'] = project.url;
+    if(request.status == 200) {
+      var response = JSON.parse(request.responseText);
+      var project = response.projects;
+      this.codioUrl = project.url;
+      localStorage['codio_url'] = project.url;
+    } else {
+      this.codioUrl = 'about:blank';
+    }
   }.bind(this);
 
   request.onerror = function(){
     this.creating = false;
     this.codioUrl = 'about:blank';
-  }.bind(this);;
+  }.bind(this);
 };
 
 
