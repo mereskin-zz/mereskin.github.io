@@ -93,15 +93,15 @@
 
 <article>
 <h1>HTML 5 drag and drop API</h1>
-<p>This article mostly covers browser incosistencies. Tutorials and specs can be found in <a href="#references">references</a> section.</p>
+<p>This article mostly covers browser incosistencies. Tutorials and specs can be found in the <a href="#references">references</a> section.</p>
 
 <section id="draggable-attribute">
 <h2>Making element draggable</h2>
-<p>To make element draggable set <code>draggable</code> attribute to "true". In Firefox you must also listen to <code>dragstart</code> event and set some data on <code>DataTransfer</code> object:</p>
+<p>To make an element draggable set <code>draggable</code> attribute to "true". However this is not enough to make elements draggable in Firefox. You need to locate the <code>dragstart</code> event and set some data on the <code>DataTransfer</code> object:</p>
 <pre><code>draggableElement.addEventListener('dragstart', function(e){
   e.dataTransfer.setData('text', 'foo');
 });</code></pre>
-<p>That should do it. Now you can drag element in all browsers.</p>
+<p>That should do it! Now you can drag elements in all browsers.</p>
 <div class="example">
 <span draggable="true">I am draggable</span>
 </div>
@@ -109,10 +109,10 @@
 
 <section id="drag-events">
 <h2>Drag-related events</h2>
-<p><code>dragstart, drag and dragend</code> events are fired on draggable element during drag operation.<br/>
-<code>dragstart</code> event is fired when drag operation has started;<br/>
-<code>dragend</code> event is fired when drag operation has completed, either on valid drop target or not;<br/>
-<code>drag</code> event is fired multiple times per second between dragstart and dragend events.</p>
+The <p><code>dragstart, drag and dragend</code> events are fired on draggable element during drag operation.<br/>
+<code>dragstart</code> event is fired when the drag operation has started;<br/> the
+<code>dragend</code> fires when the drag operation has completed; either on a valid drop target or not. The <br/>
+<code>drag</code> event is fired dozens of times per second between the dragstart and dragend events.</p>
 <div class="example">
 <span draggable="true" data-measure-rate="true">Drag me to count drag events</span>
 </div>
@@ -120,34 +120,34 @@
 
 <section id="set-data">
 <h2>DataTransfer object and setData method</h2>
-<p>DataTransfer object is used to hold the data during drag and drop operation. Data must be added to DataTransfer object using <code>setData(type, data)</code> method. This method must be called in <code>dragstart</code> event handler.</p>
+<p>DataTransfer object is used to hold the data during drag and drop operations. Data is added to the DataTransfer object using the <code>setData(type, data)</code> method. This method must be called in <code>dragstart</code> event handler.</p>
 
-<p>Data, set with <code>setData</code> is protected. It will be exposed only to drop target on <code>drop</code> event for security reasons. This is to prevent third-party iframes from stealing your data if you drag over them.</p>
+<p>Data you've set with <code>setData</code> is protected and will only be exposed to drop target on <code>drop</code> event. This is in place to prevent third-party iframes from accessing your data if you happen to drag over them.</p>
 
-<p>In theory, DataTransfer can hold multiple data items of various types:<p>
+<p>Theoretically, DataTransfer should be able to hold multiple data items of various types:<p>
 <pre><code>var data = JSON.stringify({ foo: 'bar' });
 event.dataTransfer.setData('application/json', data);
 event.dataTransfer.setData('text/plain', 'foo=bar');</code></pre>
 
-<p>In practice IE only supports 'text' and 'URL' for the 'type' argument. If you try setting type to something else, IE will throw an exception. The unfortunate consequence of this incompatibility is that if type of your dataTransfer is 'text', all text areas and inputs will act as drop areas by default.</p>
+<p>However in practice, Internet Explorer only supports 'text' and 'URL' for the 'type' argument. If you try setting type to anything else, IE will throw an exception. The unfortunate consequence of this incompatibility is that if the type of your dataTransfer is 'text', all text and input areas will by default behave as drop areas .</p>
 
 <div class="example">
-<span draggable="true">My data-type is 'text'. I interfere with inputs and textareas.</span><br/>
-<span draggable="true" data-drag-type="application/json" data-drag-data='{"foo":"bar"}'>My data-type is 'application/json'. I throw an exception in IE.</span>
+<span draggable="true"> My data-type is 'text'. I interfere with inputs and text areas.</span><br/>
+<span draggable="true" data-drag-type="application/json" data-drag-data='{"foo":"bar"}'> My data-type is 'application/json'. This results in an exception and I crash IE.</span>
 <textarea rows="5" placeholder="Try dragging span here" style="display: block;"></textarea>
 </div>
 <details>
-<summary>Work around for IE</summary>
-<p>The only way to gate this is to add try-catch around <code>setData</code> and fall back to 'text', if you catch an exception. If you want to get it fixed, help promoting this bug in IE feedback center:</p>
+<summary> Data-type workaround for IE</summary>
+<p>The only way to gate this is to add a try-catch around <code>setData</code> and fall back to 'text'if you catch an exception. Help promote this bug in IE feedback center to get it fixed sooner.</p>
 <a target="_blank" href="https://connect.microsoft.com/IE/feedback/details/898860/datatransfer-setdata-type-throws-an-exception-if-type-is-anything-but-text-and-url">Issue about dataTransfer.setData in IE feedback center</a>
 </details>
 </section>
 
 <section id="drag-image">
 <h2>Custom drag image</h2>
-<p>Another useful feature of drag-and-drop API is <code>setDragImage(elt, xOffset, yOffset)</code>. It allows you to use different visual representation of element being dragged. Despite it's name, it accepts arbitrary HTML element as an argument.</p>
+<p>Another useful feature of drag-and-drop API is the <code>setDragImage(elt, xOffset, yOffset)</code>. It allows you to use a different visual representation of the element being dragged. Despite it's name, it can accept arbitrary HTML elements as arguments.</p>
 
-<p>The only requirement is that this element must be visible to the browser when drag operation starts. Chrome and Opera won't let you use offscreen element (<code>style.top = -1000px</code>). But you can place drag image under the non-transparent element and it will work just fine.</p>
+<p>The only requirement is that the element being dragged must be visible to the browser when the drag operation starts. Chrome and Opera do not allow use of offscreen element (<code>style.top = -1000px</code>). But you can place the drag image under a non-transparent element and it will work just fine.</p>
 
 <pre><code>elt.addEventListener('dragstart', function(e){
   e.dataTransfer.setDragImage(document.querySelector('#dragImage'), 0, 0);
@@ -155,18 +155,18 @@ event.dataTransfer.setData('text/plain', 'foo=bar');</code></pre>
 <div class="example">
 <span draggable="true" data-drag-image="#dragImage">I have custom dragImage. I don't work in IE.</span>
 </div>
-<p>IE doesn't support setDragImage at all.</p>
+<p>Internet Explorer doesn't support setDragImage at all.</p>
 <details>
-<summary>Work around for IE</summary>
-<p>This problem can be worked around in IE by creating DOM element with <code>position: fixed</code> and moving it aroung on mousemove. You will also need to disable pointer events for drag image, otherwise it will interfere with drag events. In IE9 pointer events are supported only in SVG element, so your drag image cannot be an arbitrary element.</p>
+<summary>Workaround for IE</summary>
+<p> A workaround for this issue in Internet Explorer is to create a DOM element with <code>position: fixed</code> and move it aroung on mousemove. You will also need to disable all pointer events for drag image, otherwise it will interfere with drag events. In IE9 pointer events are supported only by SVG element, so your drag image cannot be an arbitrary element.</p>
 <a target="_blank" href="https://connect.microsoft.com/IE/feedback/details/898851/datatransfer-setdragimage-is-not-working-on-drag-and-drop-events">Issue about setDragImage in IE connect center</a>
 </details>
 </section>
 
 <section id="drop-zone">
 <h2>Making element a drop zone</h2>
-<p>To make element a drop zone you need to follow few unobvious steps. First of all, you need to prevent default action for <code>dragenter</code> and <code>dragover</code> events on designated drop target. Default action is to cancel drop operation.</p>
-<p>Second, you need to capture <code>drop</code> event and prevent it too, because Firefox's default action is to treat data in dataTransfer as URL (even if data type is 'text') and perform navigation.</p>
+<p>To make an element a drop zone you will need to follow a few unobvious steps. First of all, you need to prevent the default action for <code>dragenter</code> and <code>dragover</code> events to occur on designated drop targets. The default action is to cancel the drop operation.</p>
+<p> The default in Firefox is to treat data in dataTransfer as a URL and perform navigation on it, even if the data type used is ‘text’. To bypass this, you will need to capture and prevent the <code>drop</code> event. </p>
 <div class="example">
 <span draggable="true">I am draggable</span>
 <div data-drop-effect="all">Drop zone</div>
@@ -174,8 +174,8 @@ event.dataTransfer.setData('text/plain', 'foo=bar');</code></pre>
 </section>
 
 <section>
-<h2>Dragging files from desktop</h2>
-<p>This is the most enjoyable part of this API. You can access files in <code>drop</code> event through <code>event.dataTransfer.files</code> property. <code>files</code> is <a href="https://developer.mozilla.org/en-US/docs/Web/API/FileList" target="_blank">FileList</a>. Individual files can be accessed by index. Support is consistent across all browsers and it is raison d'être of the whole drag and drop API.</p>
+<h2>Dragging files from the desktop</h2>
+<p>This is the most enjoyable part of the drag and drop API. You can access files in the <code>drop</code> event via the <code>event.dataTransfer.files</code> property. Keep in mind that <code>files</code> is <a href="https://developer.mozilla.org/en-US/docs/Web/API/FileList" target="_blank">FileList</a> and individual files can be accessed through the index. This property is supported consistently across all browsers and is the raison d'être of the whole drag and drop API.</p>
 <div class="example">
 <div data-drop-effect="copy" data-display-files="true">Drop files here</div>
 </div>
@@ -183,9 +183,11 @@ event.dataTransfer.setData('text/plain', 'foo=bar');</code></pre>
 
 <section id="effects">
 <h2>dropEffect and effectAllowed</h2>
-<p>DropEffect must be set on draggable element on <code>dragstart</code> event. It can be one of 'move', 'copy', 'link' or 'none'. Drop effect affects the cursor, when you move element over drop target.</p>
-<p>In theory, you can also provide effectAllowed for drop target. If drop effect of draggable element is not allowed on this particular target, drag operation will be cancelled.</p>
-<p>In practice, that doesn't work in Safari and IE. Drop event is not prevented, regardless of effects you set on drag and drop elements. You should probably avoid using drop effect API alltogether and determine whether particular operation is permitted by different means.</p>
+<p>DropEffect must be set on the draggable element at the beggining of the <code>dragstart</code> event. The dropEffect can be either 'move', 'copy', 'link', or 'none'. Drop effect affects the cursor when you move an element over the drop target.</p>
+
+<p>In theory, you can also provide effectAllowed for a drop target. If the drop effect of a draggable element is not allowed on a particular target, the drag operation will simply be cancelled.</p>
+<p>However in practice, this does not work in Safari and IE. The drop event in these browsers is not prevented, regardless of the effects you set to drag and drop elements. You could hold off on using the drop effect API and look into finding out whether a particular operation is permitted by different means. </p>
+
 <div class="example">
 <span draggable="true" data-drag-effect="copyMove">I can be copied and moved</span>
 <span draggable="true" data-drag-effect="link">I can only be linked</span>
@@ -199,18 +201,18 @@ event.dataTransfer.setData('text/plain', 'foo=bar');</code></pre>
 
 <section id="auto-scroll">
 <h2>Dragging and scrolling</h2>
-<p>If drop zone is far below or above the draggable element, you want the document to be scrolled automatically. For example, scroll to the top and try dragging one of the draggables to drop target near the bottom of the page. Chrome, IE and Opera will auto-scroll for you. In Firefox and Safari you have to either help youself with scroll wheel or implement custom scrolling logic. Like changing scrollTop when draggable is held near the edge of scroll container.</p>
+<p>If the drop zone is far below or above the draggable element, you may want the document to scroll automatically. For example, scroll to the top of this article and try dragging one of the draggables from there to the drop target near the bottom of the page. Chrome, IE and Opera will auto-scroll for you. However in Firefox and Safari you will have to either use the scroll wheel or implement custom scrolling logic. For instance, you can change the scrollTop when a draggable is held near the edge of the scroll container.</p>
 </section>
 
 <section id="drop-zone-events">
 <h2>Drop-target related events</h2>
 <p>Following events are fired on drop target: <code>dragenter, dragover, dragleave, drop</code>.</p>
 
-<p><code>dragenter</code> and <code>dragover</code> must be prevented to enable element as a drop zone;<br/>
-<code>dragover</code> is fired at a certain rate while draggable is above drop zone;<br/>
-<code>dragleave</code> is fired when cursor leaves drop target;</p>
+<p> The <code>dragenter</code> and <code>dragover</code> must be prevented to enable utilizing an element as a drop zone;<br/>
+<code>dragover</code> is fired at a certain rate while a draggable is above the drop zone;<br/>
+<code>dragleave</code> is fired when the cursor leaves the drop target;</p>
 
-<p>Unfortunately, <code>dragenter</code> and <code>dragleave</code> events are not consistent with other mouse events. For instance, <code>dragleave</code> event on the previous drop target is fired after <code>dragenter</code> on a new target. Don't rely on these events for detecting current drop target. They are particularly poorly implemented in Firefox.</p>
+<p>Unfortunately, both <code>dragenter</code> and <code>dragleave</code> events are not consistent with other mouse events. For instance, the <code>dragleave</code> event on the previous drop target is fired after <code>dragenter</code> is on a new target. So don't rely on these events to help detect the current drop target. Especially in Firefox, in which these events are not implemented as well. </p>
 
 <div class="example">
 <span draggable="true">I am draggable</span>
@@ -224,15 +226,18 @@ This is drop zone with children:
 
 <section id="custom-cursor">
 <h2>Custom cursor for draggable elements</h2>
-<p>You can set custom cursor for draggable element, but it is reset to default when drag operation is started. Drop effect can be used for limited adjustment.</p><p>Firefox is the only browser, that pertains cursor on element with <code>:active</code> pseudoclass during drag operation.</p>
-<p>There are custom cursors available for drag operation: <code style="cursor: -webkit-grab">-webkit-grab</code>, <code style="cursor: -webkit-grabbing">-webkit-grabbing</code>, <code style="cursor: -moz-grab">-moz-grab</code> and <code style="cursor: -moz-grabbing">-moz-grabbing</code>.</p>
+<p>You can set custom cursor for draggable element, however it is reset to default when any drag operation is started. Drop effect can be used as a limited adjustment for this.</p>
+
+<p>Firefox is the only browser that pertains cursor on an element with <code>:active</code> pseudoclass during drag operation.</p>
+<p>There are also multiple custom cursors available for drag operation: <code style="cursor: -webkit-grab">-webkit-grab</code>, <code style="cursor: -webkit-grabbing">-webkit-grabbing</code>, <code style="cursor: -moz-grab">-moz-grab</code> and <code style="cursor: -moz-grabbing">-moz-grabbing</code>.</p>
 </section>
 
 <section id="summary">
 <h2>Summary</h2>
-<p>Drag and drop API has limited application. Implementation across browsers vary greatly. Drag and drop API is not supported on mobile devices. IE implementation is non-compliant with the spec and team doesn't seem to be paying any attention to oustanding issues.</p>
+<p> The drag and drop API has limited application and its implementation varies greatly across different browsers. Additionally, the API is not supported on mobile devices.</p>
+<p> Ineternet Explorer of the drag and drop API implementation is non-compliant with the spec and there are some currently outstanding issues their team is working through.</p>
 
-<p>Use native drag and drop API if (a) you need to drag objects across browser windows and applications or (b) you need to drag files from desktop. Otherwise, consider mouse-events based alternative.</p>
+<p>The native drag and drop API is usefull at times when (a) you need to drag objects across different browser windows and applications or (b) you need to drag files from the desktop. Otherwise you might want to consider a mouse-events based alternative. </p>
 </section>
 
 <section id="references">
