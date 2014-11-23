@@ -2,24 +2,15 @@
 <html>
 <head>
   <title>react gadget</title>
+
   <script src="../bower_components/react/react.js"></script>
-  <script src="../bower_components/react/JSXTransformer.js"></script>
-
-  <script src="gadget-loader.js" async></script>
-  <link rel="import" href="react-gadget.html" async="true" />
+  <script src="versal-gadget.js"></script>
+  <script src="dist/hello-world.js"></script>
+  <script src="dist/fibonacci-numbers.js"></script>
 </head>
+
 <body>
-
-<react-gadget></react-gadget>
-
-<script>
-var userName = 'Anonymous';
-
-if(window.location.hash) {
-  userName = window.location.hash.substr(1);
-}
-
-document.querySelector('react-gadget').setAttribute('data-user-name', userName);
-</script>
+<hello-world data-name="Andrey"></hello-world>
+<fibonacci-numbers up-to=5></fibonacci-numbers>
 </body>
 </html>
