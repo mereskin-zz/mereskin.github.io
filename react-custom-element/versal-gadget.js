@@ -1,6 +1,5 @@
 function registerReactComponent(elementName, ReactComponent) {
   document.registerElement(elementName, { prototype: customElement(ReactComponent) });
-  console.log('registered ', elementName, 'with', ReactComponent);
 };
 
 function customElement(ReactComponent) {
