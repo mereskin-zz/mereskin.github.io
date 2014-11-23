@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 var FibonacciNumbers = React.createClass({
   render: function(){
-    return <p>{ this.sequence(10).join(', ') }</p>;
+    return <p>{ this.sequence(parseInt(this.props.upTo, 10)).join(', ') }</p>;
   },
 
   sequence: function(max) {
