@@ -14,14 +14,21 @@ function parseImport(evt) {
   var prototype = Object.create(HTMLElement.prototype);
 
   prototype.createdCallback = function(){
-    var ctor = window.VersalGadgetClasses[elementName](this.dataset);
-    this._component = React.renderComponent(ctor, this);
+    this._ctor = window.VersalGadgetClasses[elementName];
   };
+
+  prototype.attachedCallback = function(){
+    this._render();
+  }
 
   prototype.attributeChangedCallback = function(name, old, current) {
     if(name.match(/^data\-/)) {
-      this._component.setProps(this.dataset);
+      this._render();
     }
+  };
+
+  prototype._render = function(){
+    React.renderComponent(this._ctor(this.dataset), this);
   };
 
   document.registerElement(elementName, { prototype: prototype });
